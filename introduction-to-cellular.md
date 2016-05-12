@@ -1,7 +1,8 @@
-% Cellular
-% James Geddes
-% May 2016
 ---
+title: "Cellular:"
+subtitle: "A proposal for less awful spreadsheets"
+author: "James Geddes"
+date: "May 2016"
 theme: ati
 transition: fade
 transitionSpeed: fast
@@ -9,7 +10,93 @@ controls: !!str false
 center: true
 ...
 
-<!-- === CONTEXT === --> 
+<div class="notes"> 
+
+Hello. My name is James Geddes and I have some bad news for you: the world runs on
+Excel.
+
+From 2002 to 2009 I was a strategy consultant. I helped some of the largest
+companies in the world make decisions. I helped an airline open a new
+transatlantic route; I helped a mining company improve the performance of their
+mines; I even had the privilege of helping a chain of pubs set the price of
+beer.
+
+How did I know what to advise our clients? I built models. A model is a
+mathematical simplification of the world. It keeps you honest. It lets you test
+out your ideas. If I make such-and-such a change, what will happen to my
+profits?
+
+I worked for one of the most prestigious stategy consulting firms out there. We
+pride ourselves on our quantitative focus. We must use some pretty amazing
+modelling tools, right? Well, we used Excel. Excel *is* pretty amazing in some
+ways -- it's amazing because *everyone can use it*. It's less amazing in other ways.
+
+From 2009 to 2014 I worked at the Department of Energy and Climate Change. I
+worked with a team attempting to answer the question, how do we reduce the UK's
+greenhouse gas emissions by 80% over the next 40 years? To answer this question,
+we built a model: I was the architect of this model although you could say that
+the godfather of the model was David MacKay. The model simulated the entire
+energy system of the UK for 40 years. We must have used some pretty complex
+software, right? Well, we used Excel. It *was* a pretty sophisticated Excel
+model in some ways. Less so in others.
+
+Government runs on Excel. That's what government analysts use. Often, of course,
+analysis is outsourced to a technical consulting company. *They* might use
+linear programming or something. But in government: Excel. 
+
+Later on, we helped other governments build their own versions of the
+model. China build one, India built one, even Wallonia built one. Each time we
+helped a country build their model we would reconstruct our enormous Excel
+spreadsheet, painfully making hundreds of manual changes, introducing errors as
+we did so.
+
+Well, I've had enough. I never want to build another Excel model again. Cellular
+is my plan.
+
+</div>
+
+> FIXME: Box said, "All models are wrong; the practical question is how wrong
+> do they have to be to not be useful?" 
+
+<!-- AGENDA -->
+
+A brief history of spreadsheets
+
+Why the problem matters
+
+How to put it right
+
+Challenges
+
+
+
+In the beginning was VisiCalc
+-----------------------------
+
+Then came ...
+-------------
+
+![Spreadsheets through the ages](images/spreadsheet-history.png)
+
+<div class="notes">
+
+Visicalc (1979) was the “killer app” for the Apple II. You bought an Apple II because you wanted to run Visicalc. Lotus 1-2-3 was the killer app for PCs. 
+Microsoft Multiplan -- 1982
+Lotus 1-2-3 -- 1983
+Excel Mac -- 1985
+Excel Windows -- 1987
+Quattro Pro -- 1988 (Intended to compete with Lotus, still available from Corel(!))
+Improv -- 1991 (Innovative -- separated data, view, and formulas)
+Analytica -- 1996
+Google -- 2006
+</div>
+
+
+Excel has been dominant for 20 years
+------------------------------------
+
+![A history of spreadsheets. Source: Google ngrams.](images/spreadsheet-ngrams.png)
+
 
 Sometimes research makes the news
 ---------------------------------
@@ -23,14 +110,14 @@ Sometimes research makes the news
 
 <hr/>
 
-Carmen M. Reinhart, Kenneth S. Rogoff (2010). "Growth in a Time of Debt". 
-  *American Economic Review* **100** (2): 573–78.
+Carmen M. Reinhart, Kenneth S. Rogoff (2010). "Growth in a Time of
+    Debt". *American Economic Review* **100** (2): 573–78.
 
 --------------
 
-![Reinhart and Rogoff's spreadsheet. Source: Thomas Herndon, Michael Ash, and Robert Pollin via Mike Konczal](images/reinhart_rogoff_ss.png){width=60%}
+![Reinhart and Rogoff’s spreadsheet. Source: Thomas Herndon, Michael Ash, and Robert Pollin via Mike Konczal](images/reinhart_rogoff_ss.png){width=60%}
 
-<div class = "notes">
+<div class="notes">
 * NB: Spreadsheet error was not the only issue taken with the paper. But it's a
   good example of the sort of errors that occur. 
 
