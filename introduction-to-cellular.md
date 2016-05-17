@@ -281,8 +281,33 @@ What kind of language are spreadsheets?
 
 
 
+Uncertainty
+-----------
 
 
+Inference
+---------
+
+
+
+
+Other kinds of models
+---------------------
+
+* Maximisation
+
+* Dynamic simulation
+
+* Agent-based simulation
+
+* Equilibrium-finding
+
+* “Full” Bayesian inference
+
+
+
+
+	
 Challenges
 ----------
 
