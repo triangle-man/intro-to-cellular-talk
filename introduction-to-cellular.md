@@ -10,7 +10,7 @@ controls: !!str false
 center: true
 ...
 
-The West Coast Mainline débacle
+The West Coast Mainline débâcle
 -------------------------------
 
 ![Photo: Aaron Roberts https://www.flickr.com/photos/aaronsrailwayphots/ (CC BY-NC 2.0)](images/virgin-train.jpg)
@@ -207,28 +207,60 @@ What kind of models are spreadsheet models?
 </div>
 
 
-Spreadsheets are:
------------------
+Software development practices
+------------------------------
 
-Explicit |
-Understandable |
-Manageable
+* Separation of concerns (aka, divide and conquer)
+   - Rows, columns, tabs
+   - But difficult if "concern" generalises a concrete pattern
+   - And difficult to separate code and data
 
-*but*
+* Don't repeat yourself
+  
 
-Simplistic |
-Single-user |
-Not robust |
+* Say what you mean
 
---------
+<div class="notes">
 
-Divide and conquer
+To understand the challenge faced by spreadsheet modellers, consider three good
+practices in software development. There are many practices, of course, such as:
+unit testing, requirements specification, coding conventions, and what have you;
+but these three seem to ne to get to the essence of *programming* as opposed to
+any technical design activity.
 
-Don't repeat yourself
+First of all, if you have a complicated problem, you should break it down into
+subproblems.
 
-Say what you mean
+In some sense, Excel does quite well here. Of course, it's up to the modeller to
+correctly choose the subproblems, but once she does so, Excel provides some
+presentational techniques to help manage the separation. One can break up tasks
+into different worksheets, for example, or different rows or columns.
 
---------
+
+
+
+
+
+</div>
+
+
+The spreadsheet tradeoff
+------------------------
+
+
+* But spreadsheets are:
+
+-----------------------------------------------
+This ...             ... rather than this
+-------------------- --------------------------
+Concrete             Abstract
+
+Simple               High-level
+
+Explicit             Flexible
+-----------------------------------------------
+
+
 
 Other proposals
 ---------------
@@ -244,6 +276,8 @@ Tabular
 Improv
 
 Felienne
+
+Scenarios
 
 <div class="notes">
 One good question to ask is: what haven't these succeeded?
@@ -287,6 +321,11 @@ Uncertainty
 
 Inference
 ---------
+
+Preliminary ideas
+-----------------
+
+O --> O --> O
 
 
 
