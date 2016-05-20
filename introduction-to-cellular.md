@@ -137,13 +137,13 @@ Google -- 2006
 
 * [A brief history of spreadsheets](#a-brief-history-of-spreadsheets)
 
-* [What kind of models are spreadsheet models?](#what-kind-of-models-are-spreadsheet-models)
+* [Modelling with spreadsheets](#modelling-with-spreadsheets)
 
 * Cellular
 
 * Challenges
 
-<!-- ====================================================================== -->
+<!-- =================== A BRIEF HISTORY OF SPREADSHEETS ================== -->
 
 A brief history of spreadsheets
 -------------------------------
@@ -155,6 +155,22 @@ VisiCalc: the first ‘killer app’
 
 ![Screenshot of VisiCalc on the Apple II. Photo: apple2history.org](images/Visicalc.jpg)
 
+<div class="notes"> 
+
+A quick word here about what I'm not going to discuss. VisiCalc did not have any
+sort of embedded programming environment. Excel does, however: it has Visual
+Basic for Applications, VBA. VBA is a complete programming language. Any of the
+restrictions I'm going to discuss could I suppose be worked around by
+sufficiently clever use of VBA. Indeed, I've built models with VBA --
+particularly in order to automate some part of a workflow so that end-users did
+not have perform a series of manual steps. 
+
+I'm not going to make a strong argument here. Let me just say that I have never
+seen a model which includes VBA which is at all comprehensible. In terms of
+clarity and robustness, VBA has in my experience only ever made things worse.
+
+</div>
+
 Excel has been dominant for 20 years
 ------------------------------------
 
@@ -165,10 +181,10 @@ Excel has, perhaps, on the order of 750 million users.
 </div>
 
 
-What kind of models are spreadsheet models?
--------------------------------------------
+Modelling with spreadsheets
+---------------------------
 
-<!-- ==================	SPREADSHEETS =================== -->
+<!-- ===================== MODELLING WITH SPREADSHEETS ==================== -->
 
 -----------------
 
@@ -211,35 +227,111 @@ Software development practices
 ------------------------------
 
 * Separation of concerns (aka, divide and conquer)
-   - Rows, columns, tabs
-   - But difficult if "concern" generalises a concrete pattern
-   - And difficult to separate code and data
+![](images/ss-tabs.png){width=65%}
 
-* Don't repeat yourself
-  
+* Don't repeat yourself (aka, generalise)
+![](images/ss-dry-fail.png){width=65%}
 
-* Say what you mean
+* Say what you mean (aka, abstract)
+```
+=IFERROR(INDEX(INDIRECT($C10 & ".Outputs[" & this.Year & "]"),
+               MATCH(G$5, INDIRECT($C10 & ".Outputs[Vector]"), 0)), 0)
+```
 
 <div class="notes">
 
-To understand the challenge faced by spreadsheet modellers, consider three good
-practices in software development. There are many practices, of course, such as:
-unit testing, requirements specification, coding conventions, and what have you;
-but these three seem to ne to get to the essence of *programming* as opposed to
-any technical design activity.
+Let me outline for you some of the challenges faced by spreadsheet
+modellers. I'm going to spend some time on this slide and the next one.
+
+Consider in particular three good practices in software development. There are
+many practices, of course, such as: unit testing, requirements specification,
+coding conventions, and what have you; but these three seem to ne to get to the
+essence of *programming* as opposed to an arbitrary technical design activity.
 
 First of all, if you have a complicated problem, you should break it down into
-subproblems.
+subproblems, each of which is simpler.
 
 In some sense, Excel does quite well here. Of course, it's up to the modeller to
 correctly choose the subproblems, but once she does so, Excel provides some
-presentational techniques to help manage the separation. One can break up tasks
-into different worksheets, for example, or different rows or columns.
+presentational techniques to help manage the separation. One can place different
+tasks on different worksheets, for example, or, for simple submodels, in
+different rows or columns.
 
+Most good modellers will do precisely this. Indeed, organisations typically set
+up standards for the use of each worksheet: here's an example of one such.
 
+Still, it's not great. It's not enough simply to separate different parts of the
+model: one must define the ways in which the parts interact. Most programming
+languages have some facility for constructing the interface between
+components. That facility will typically ensure that the components cannot be
+used except through the interface, a constraint known as "information hiding" --
+not keeping secrets, but making sure that it's clear how and when one part of
+the model interacts with another. In Excel one must enforce such separation
+through convention and practice. For example, in the 2050 Calculator, we made a
+rule that inputs to a worksheet must exist only in a defined block at the top of
+the worksheet; when those values were needed somewhere in the worksheet, they
+were taken from that block at the top, not directly from source.
 
+And perhaps this principle finds its most useful expression in the design of
+"libraries": pre-built software components that perform some task commonly used
+in other programs. Almost every Excel model is built *de novo*. There's no
+"import workbook". (Well, you can copy and paste but that never leads anywhere
+good.) Real models of the real world involve physical units and every
+spreadsheet that uses units has an *ad hoc* solution to the problem. It would be
+nice to solve this problem once and allow modellers to re-use that solution. It
+would be even nicer if, when we discovered bugs in or made improvements to our
+common solution, those changes could painlessly be incorporated in users' models.
 
+And there's a further problem, which is related to the second practice. Only a
+certain kind of concern can be separated in Excel. Specifically, it must be a
+defined step in the data flow process.
 
+What other concerns might there be? Well, one might wish to abstract some
+calculation and the re-use it. Here we have a problem. It is very hard to do
+this in Excel. About the best we can do is copy the calculation from one cell to
+another and make sure that references to other cells are made relative to the
+copied cell. We can assume that this is what was done, for example, in the
+Reinhart and Rogoff model.
+
+Why is this a problem? It's a problem because we are repeating ourselves. Once
+we repeat ourselves, inevitably one of those repetitions will be wrong. There's
+no way to tell Excel, "look, this is the same calculation, so make sure you
+really are computing the same calculation."
+
+(Note to experienced modellers: array formulae are a thing that exists, of
+course. In some sense, array formulae are one of the most "Excel-like" things in
+Excel. But as you know, they have their own problems.)
+
+Repeating larger blocks is much harder. Typically tyhe problem is that you want
+to repeat something *mutatis mutandis* and so the question is, how do you
+explain which mutandis must be mutatis? Here's an example from the 2050
+Calculator.
+
+You know -- just to say -- looking at that, isn't it absolutely clear that if
+you can do *that* -- surely, *surely* you could write some code!
+
+Why did I write this monstrosity? So that an entire worksheet could be
+reproduced from a copy of another one, whilst making sure that the copy "knew"
+it was a copy.
+
+Actually, this example is a good illustration of the challenges of the third
+principle. What does all this palavar *mean*? In a spreadsheet, every expression
+is written at the lowest level -- the only level. To work out what something is
+trying to do it's necessary to, well, work it out. We get around this with
+conventions -- naming conventions, formatting conventions, structure conventions
+-- but it's a very weak solution. 
+
+This formula looks up a particular energy flow from a particular sector for a
+particular year, making sure the result is zero if that kind of energy isn't
+produced or consumed by that sector. But you wouldn't know it to look at this.
+
+It's worse than you think. Because of a flaw in the way certain references are
+implemented in Excel, one has to encode them in character strings! That, right
+there, will be -- and was -- an enormous source of bugs when you want to create
+a similar model. 
+
+So our tasks is clear: figure out how to introduce these development practices
+into a spreadsheet paradigm. But we must be careful.
 
 </div>
 
@@ -247,37 +339,96 @@ into different worksheets, for example, or different rows or columns.
 The spreadsheet tradeoff
 ------------------------
 
-
-* But spreadsheets are:
-
------------------------------------------------
-This ...             ... rather than this
+Spreadsheets are ... instead of being ...
 -------------------- --------------------------
 Concrete             Abstract
+Specific             General
+Primitive            Composable
 
-Simple               High-level
+<div class="notes">
 
-Explicit             Flexible
------------------------------------------------
+Here's our main problem. There's a *reason* that we can't apply those three
+software development practices in Excel, which is that spreadsheets don't
+support them. And the reason for that is that spreadsheets do support something
+else: they support people. Spreadsheets are concrete -- what you see is what
+there is. They are specific -- what they do is what they do. And their
+principles are very simple and they compose in only the simplest way.
+
+There's a reason for these design issues: they make spreadsheets usable by
+people. If we're going to fix the problems they bring, we're going to have to
+tread carefully.
+
+You know, there are two kinds of complexity in the world. 
+
+FIXME: Story of Ptolemaic epicycles (AD 100 ish) vs. Newton's laws (late 1600s) resulting in Keplerian
+motion (early 1610-1620s) 
+
+</div>
+
+
+Spreadsheets are (a bit) like programs
+--------------------------------------
+
+![](images/eg-tax-calc.png){width=30.5%} ![](images/eg-tax-calc-expression-tree.png){width=30%}
+
+```C
+times(0.20, minus(21000, 11000))
+```
+
+```pascal
+A1 := 21000
+A2 := 11000
+A3 := A1 - A2
+A4 := 0.20
+A5 := A3 * A4
+```
+
+(No loops or recursion ...)
+
+<!-- ===================== MODELLING WITH SPREADSHEETS ==================== -->
+
+A different approach
+--------------------
+
+* Spreadsheets are a programming language -> Extend this
+
+* Spreadsheets are interactive -> So are modern languages
+
+* It's hard to format tables -> Make this easy!
+
+* Probability is impossible -> Make it possible
+
+* Incremental transition from easy to abstract.
+
+
+
+
+
+
+What kind of language are spreadsheets?
+---------------------------------------
+
+
+
 
 
 
 Other proposals
 ---------------
 
-Gencell
+* Gencell
 
-User-centred functions
+* User-centred functions
 
-ModelSheet Authoring
+* ModelSheet Authoring
 
-Tabular
+* Tabular
 
-Improv
+* Improv
 
-Felienne
+* Felienne
 
-Scenarios
+* Scenarios
 
 <div class="notes">
 One good question to ask is: what haven't these succeeded?
@@ -289,38 +440,10 @@ One good question to ask is: what haven't these succeeded?
 * They involve extensions to Excel (breaks collaboration)
 </div>
 
-Our challenge
--------------
-
-1. What kind of models are spreadsheets used for?
-
-2. Why do people use spreadsheets?
-
-3. How do we keep (1) without losing (2)?
-
-Proposal
---------
-
-Spreadsheets are a programming language -> Extend this
-
-Spreadsheets are interactive -> So are modern languages
-
-It's hard to format tables -> Make this easy!
-
-Probability is impossible -> Make it possible
-
-
-What kind of language are spreadsheets?
----------------------------------------
-
-
 
 Uncertainty
 -----------
 
-
-Inference
----------
 
 Preliminary ideas
 -----------------
@@ -328,6 +451,8 @@ Preliminary ideas
 O --> O --> O
 
 
+
+<!-- ============================= CHALLENGES ============================= -->
 
 
 Other kinds of models
@@ -347,43 +472,7 @@ Other kinds of models
 
 
 	
-Challenges
-----------
 
-
-And that's before we get to uncertainty ...
-[David's example]
-
-Why do we use Excel, anyway?
-- * can start small! (Try making a list on MS SQL Server)
-- can do calculations! (Don't need to know abstractions)
-- can format results! 
-- can link into 
-- it's an end-user programming tool
-
-
-
-What is modelling?
-
-
-
-
-
-Can we do better?
-- All the ways people are trying to fix this ...
-
-
-
-What's wrong?
-- copy/paste
-- 
-
-
-
-What is an Excel model, really?
-
-Ideas for cellular
-- DAG
 
 Next steps
 ----------
