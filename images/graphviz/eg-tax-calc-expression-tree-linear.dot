@@ -1,0 +1,35 @@
+digraph taxcalc {
+
+graph [rankdir = "TB";
+       pad = "0.5,0.2";
+       ]
+
+edge [color = "#9db5bd"];
+
+node [shape = circle;
+      color = "#9db5bd";]
+
+      {rank=same; 
+	      
+	      "21000" [shape=box];
+	      "11000" [shape=box];
+	      "−";
+	      " 0.20 " [shape=box];
+	      "×";
+	      } [ordering="out";
+		 style=invis;
+		 ]
+      
+     
+     "21000" -> "−";
+     
+     "11000" -> "−" [tailport=se;
+		     headport=sw]
+     " 0.20 " -> "×" [tailport=se;
+		      headport=sw]
+
+		      "−" -> "×";
+		      "−" -> " 0.20 " [style=invis];
+		      
+
+}

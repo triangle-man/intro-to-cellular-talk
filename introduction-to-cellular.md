@@ -336,14 +336,14 @@ into a spreadsheet paradigm. But we must be careful.
 </div>
 
 
-The spreadsheet tradeoff
-------------------------
+Spreadsheet are ...
+-------------------
 
-Spreadsheets are ... instead of being ...
--------------------- --------------------------
-Concrete             Abstract
-Specific             General
-Primitive            Composable
+1. Concrete (not abstract)
+
+2. Specific (not general)
+
+3. Primitive (not composable)
 
 <div class="notes">
 
@@ -366,29 +366,173 @@ motion (early 1610-1620s)
 </div>
 
 
-Spreadsheets are (a bit) like programs
---------------------------------------
+<!-- ===================== MODELLING WITH SPREADSHEETS ==================== -->
 
-![](images/eg-tax-calc.png){width=30.5%} ![](images/eg-tax-calc-expression-tree.png){width=30%}
+The plan
+--------
 
+1. Observe that spreadsheets are already a lot like a simplistic programming
+   language
+   
+2. Write this language explicitly, so that spreadsheets are written as programs 
+   (keeping the benefit/cost tradeoff positive!)
+   
+3. Generalise the language to include more powerful features (without losing the
+   ease of use!)
+
+
+Every spreadsheet is a graph
+----------------------------
+
+```
+   |       A         |      B     |
+===+=================+============+
+ 1 | Salary          |      21000 |
+ 2 | Allowance       |      11000 |
+ 3 | Taxable income  |  = B1 - B2 |
+ 4 | Basic rate      |        0.2 |
+ 5 | Tax payable     |  = B3 * B4 |
+```
+
+![](images/graphviz/eg-tax-calc-expression-tree.png)
+
+<div class="notes">
+
+Here is a simple model written as a spreadsheet. It's a typical spreadsheet
+model. Computation proceeds from inputs to outputs; in this case from
+top-to-bottom. It's considered good design practice to lay out a spreadsheet in
+this way to aid in comprehension. In some sense, it's a primitive form of
+information hiding: if you want to find the values that enter into a particular
+computation you know that must look above the cell containing the computation.
+
+The cells of any spreadsheet can be arranged as the nodes in a directed graph. A
+node in this graph is either a value or an expression of the values in other
+nodes and the arrows of the graph show which cells depend on which others. I am
+going to leave out the comments for these examples but clearly part of the
+challenge will be to figure out how to incorporate them since they play a key
+role in real spreadsheets.
+
+The graph is acyclic: Excel will complain if the spreadsheet contains what it
+calls "circular references". It is possible to force Excel to allow cycles, but
+models incorporating such features are thought of as something of a hack.
+
+Some cells in this example have no dependencies nor are dependent on other
+cells: these are the labels, which I think are akin to comments in a program.
+
+Well, now we have an expression graph. In fact, we have what looks very like an
+abstract syntax tree, such as built by a compiler. In which case, we ought to be
+able to write down one or more languages which "compile to" precisely this
+expression graph.
+
+This language be extremely simple: it is a purely functional language with
+neither iteration nor recursion; nor are functions first-class values.
+
+</div>
+
+
+From spreadsheet to program
+---------------------------
+
+Topological sort:
+
+![](images/graphviz/eg-tax-calc-expression-tree-linear.png)
+
+Then write out each step. This language is called "grid": 
+```pascal
+B1 := 21000
+B2 := 11000
+B3 := B1 - B2
+B4 := 0.20
+B5 := B3 * B4
+```
+
+Burden of naming too high? But good as a "universal spreadsheet language".
+
+<div class="notes">
+
+Here's one approach, which is almost a direct translation of the spreadsheet. We
+take the expression graph of the spreadsheet and linearise it. Note that 
+
+Then we simply bind the value of each node to a different symbol. Here I've
+chosen the symbols to be precisely the names of the cells that gave rise to this
+graph.
+
+Execution proceeds in a single path: there are no branches or
+loops. (Conditionals are expressions.)
+
+In this view, a program consists of a series of assignments, the left-hand side
+of which is a previously unused symbol and the right-hand side is an expression
+involving primitive operators and functions and previously-named symbols.
+
+Any directed acyclic graph can be written in this way -- it doesn't have to be a
+tree as in this example.
+
+So this could be our programming language. Of course, we'd still need some
+sensible way of assigning these variables to cells: a single column spreadsheet
+is not particularly user friendly.
+
+A larger problem is that this style imposes a cognitive burden on the modeller
+in that it requires the modeller to worry about things they don't want to worry
+about: specifically, naming things. Choosing names is hard, and the beauty of
+spreadsheets is that you don't have to choose names: you just use an empty
+cell. You don't even have to remember the name later, you can just point at the
+cell.
+
+That barrier seems to me to be too high. My intuition is that spreadsheet
+modellers will find it too hard to create names. And why should they? This
+language is too low-level.
+
+However, I think it is a good final target. It's like "machine code for
+spreadsheets", in that, with the exception of layout, we could convert this into
+any particular spreadsheet: Excel, LibreOffice, Numbers, Google docs, and so
+on. 
+
+I propose the name "grid" for this language (which is still somewhat undefined).
+
+</div>
+
+
+From program to spreadsheet (I)
+-------------------------------
+
+Conventional function syntax:
 ```C
 times(0.20, minus(21000, 11000))
 ```
 
-```pascal
-A1 := 21000
-A2 := 11000
-A3 := A1 - A2
-A4 := 0.20
-A5 := A3 * A4
-```
+Then:
 
-(No loops or recursion ...)
+1. Generate expression graph
+2. Find its topological sort
+3. Generate "single static assignment"
+4. Lay out the result (in some clever way)
 
-<!-- ===================== MODELLING WITH SPREADSHEETS ==================== -->
+But: inverts the "data flow programming" mindset familiar to spreadsheet
+modellers.
 
-A different approach
---------------------
+<div class="notes">
+
+What about conventional syntax? 
+
+Well, it has the great benefit that we don't have to make up names for
+things. And it looks like a conventional (functional) programming language.
+
+
+
+
+
+</div>
+
+
+Language tree
+-------------
+
+![](images/graphviz/languages.png)
+
+
+
+What I think is necessary for success
+-------------------------------------
 
 * Spreadsheets are a programming language -> Extend this
 
@@ -399,18 +543,6 @@ A different approach
 * Probability is impossible -> Make it possible
 
 * Incremental transition from easy to abstract.
-
-
-
-
-
-
-What kind of language are spreadsheets?
----------------------------------------
-
-
-
-
 
 
 Other proposals
@@ -445,10 +577,6 @@ Uncertainty
 -----------
 
 
-Preliminary ideas
------------------
-
-O --> O --> O
 
 
 

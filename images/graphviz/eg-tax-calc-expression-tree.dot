@@ -1,0 +1,17 @@
+digraph taxcalc {
+
+graph [rankdir = "BT";
+       pad = "0.5,0.2";
+       ]
+
+edge [color = "#9db5bd"];
+
+node [shape = circle;
+      color = "#9db5bd"];
+
+{node [shape = box];
+	"21000" "11000"} -> "−";
+
+{"−" " 0.20 " [shape = box]} -> "×";
+
+}
