@@ -576,6 +576,18 @@ spreadsheet. Perhaps a good intermediate representation? (Provisional name
 How do we add "real" language features?
 ---------------------------------------
 
+Two options, perhaps:
+
+1. "Compile" a language to "nocell".
+   
+   - Unwrap loops, expand functions, ...
+   
+2. Make "cell" a "nocell"-generating language
+
+   - "Spreadsheets as values"
+   
+   - More interactive
+
 
 Uncertainty
 -----------
