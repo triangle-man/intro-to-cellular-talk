@@ -8,7 +8,9 @@ graph [rankdir = "LR";
        node [shape = box;
 	     color = "#9db5bd"];
        
-       nocell -> cell -> grid -> Excel;
+	     cell -> nocell [label = "'compilation'"];
+	     nocell -> grid [label = "layout"];
+	     grid -> Excel [label = "target specific"];
 
 }
 

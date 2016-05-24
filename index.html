@@ -66,7 +66,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <section>
   <h1 class="title">Cellular:</h1>
-  <h1 class="subtitle">A proposal for less awful spreadsheets</h1>
+  <h1 class="subtitle">A proposal for better spreadsheets</h1>
   <h2 class="author">James Geddes</h2>
   <h3 class="date">May 2016</h3>
 </section>
@@ -135,10 +135,10 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <!-- ========================= TABLE OF CONTENTS ========================== -->
 <ul>
-<li><p><a href="#/a-brief-history-of-spreadsheets">A brief history of spreadsheets</a></p></li>
-<li><p><a href="#/modelling-with-spreadsheets">Modelling with spreadsheets</a></p></li>
+<li><p>Background to spreadsheets</p></li>
+<li><p>The challenge of doing better</p></li>
 <li><p>Cellular</p></li>
-<li><p>Challenges</p></li>
+<li><p>Open questions</p></li>
 </ul>
 <!-- =================== A BRIEF HISTORY OF SPREADSHEETS ================== -->
 </section>
@@ -227,13 +227,14 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <ol type="1">
 <li><p>Concrete (not abstract)</p></li>
 <li><p>Specific (not general)</p></li>
-<li><p>Primitive (not composable)</p></li>
+<li><p>Immediate (not deferred)</p></li>
 </ol>
 <aside class="notes">
-<p>Here's our main problem. There's a <em>reason</em> that we can't apply those three software development practices in Excel, which is that spreadsheets don't support them. And the reason for that is that spreadsheets do support something else: they support people. Spreadsheets are concrete -- what you see is what there is. They are specific -- what they do is what they do. And their principles are very simple and they compose in only the simplest way.</p>
+<p>Here's our main problem. There's a <em>reason</em> that we can't apply those three software development practices in Excel, which is that spreadsheets don't support them. And the reason for that is that spreadsheets do support something else: they support people. Spreadsheets are concrete -- what you see is what there is. They are specific -- what they do is what they do. And they typically start with the data and transform it; rather than starting with a model and applying it to data.</p>
 <p>There's a reason for these design issues: they make spreadsheets usable by people. If we're going to fix the problems they bring, we're going to have to tread carefully.</p>
 <p>You know, there are two kinds of complexity in the world.</p>
 <p>FIXME: Story of Ptolemaic epicycles (AD 100 ish) vs. Newton's laws (late 1600s) resulting in Keplerian motion (early 1610-1620s)</p>
+<p>Spreadsheet programmers start with numbers. They organise these into tables, then they apply certain operations. At no time do they need to worry about names, although they can add names if they wish.</p>
 </aside>
 <!-- ===================== MODELLING WITH SPREADSHEETS ==================== -->
 </section>
@@ -272,29 +273,30 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <figure>
 <img src="images/graphviz/eg-tax-calc-expression-tree-linear.png" />
 </figure>
-<p>Then write out each step. This language is called &quot;grid&quot;:</p>
+<p>Then write out each step:</p>
 <div class="sourceCode"><pre class="sourceCode pascal"><code class="sourceCode pascal">B1 := <span class="dv">21000</span>
 B2 := <span class="dv">11000</span>
 B3 := B1 - B2
 B4 := <span class="dv">0.20</span>
 B5 := B3 * B4</code></pre></div>
-<p>Burden of naming too high? But good as a &quot;universal spreadsheet language&quot;.</p>
+<p>In my view, the burden of naming is too high. But this language (&quot;grid&quot;?) could be used as a &quot;universal spreadsheet language&quot;.</p>
 <aside class="notes">
 <p>Here's one approach, which is almost a direct translation of the spreadsheet. We take the expression graph of the spreadsheet and linearise it. Note that</p>
 <p>Then we simply bind the value of each node to a different symbol. Here I've chosen the symbols to be precisely the names of the cells that gave rise to this graph.</p>
 <p>Execution proceeds in a single path: there are no branches or loops. (Conditionals are expressions.)</p>
 <p>In this view, a program consists of a series of assignments, the left-hand side of which is a previously unused symbol and the right-hand side is an expression involving primitive operators and functions and previously-named symbols.</p>
 <p>Any directed acyclic graph can be written in this way -- it doesn't have to be a tree as in this example.</p>
-<p>So this could be our programming language. Of course, we'd still need some sensible way of assigning these variables to cells: a single column spreadsheet is not particularly user friendly.</p>
-<p>A larger problem is that this style imposes a cognitive burden on the modeller in that it requires the modeller to worry about things they don't want to worry about: specifically, naming things. Choosing names is hard, and the beauty of spreadsheets is that you don't have to choose names: you just use an empty cell. You don't even have to remember the name later, you can just point at the cell.</p>
+<p>So this could be our programming language. It has the nice feature that, as a &quot;step by step&quot; recipe, it appears to follow the spreadsheet modeller's thought process.</p>
+<p>Of course, we'd still need some sensible way of assigning these variables to cells: a single column spreadsheet is not particularly user friendly.</p>
+<p>A larger problem, in my view, is that this style imposes a cognitive burden on the modeller in that it requires the modeller to worry about things they don't want to worry about: specifically, naming things. Choosing names is hard, and the beauty of spreadsheets is that you don't have to choose names: you just use an empty cell. You don't even have to remember the name later, you can just point at the cell.</p>
 <p>That barrier seems to me to be too high. My intuition is that spreadsheet modellers will find it too hard to create names. And why should they? This language is too low-level.</p>
-<p>However, I think it is a good final target. It's like &quot;machine code for spreadsheets&quot;, in that, with the exception of layout, we could convert this into any particular spreadsheet: Excel, LibreOffice, Numbers, Google docs, and so on.</p>
+<p>However, I think it is a good <em>final</em> target. It's like &quot;machine code for spreadsheets&quot;, in that, with the exception of layout, we could convert this into any particular spreadsheet: Excel, LibreOffice, Numbers, Google docs, and so on.</p>
 <p>I propose the name &quot;grid&quot; for this language (which is still somewhat undefined).</p>
 </aside>
 </section>
 <section id="from-program-to-spreadsheet-i" class="slide level2">
 <h1>From program to spreadsheet (I)</h1>
-<p>Conventional function syntax:</p>
+<p>Conventional function syntax (built-in functions only):</p>
 <div class="sourceCode"><pre class="sourceCode c"><code class="sourceCode c">times(<span class="fl">0.20</span>, minus(<span class="dv">21000</span>, <span class="dv">11000</span>))</code></pre></div>
 <p>Then:</p>
 <ol type="1">
@@ -303,38 +305,93 @@ B5 := B3 * B4</code></pre></div>
 <li>Generate &quot;single static assignment&quot;</li>
 <li>Lay out the result (in some clever way)</li>
 </ol>
-<p>But: inverts the &quot;data flow programming&quot; mindset familiar to spreadsheet modellers.</p>
+<p>Hypothesis: inversion of &quot;data flow programming&quot; mindset familiar to spreadsheet modellers is a barrier. (cf. magrittr in R.)</p>
 <aside class="notes">
 <p>What about conventional syntax?</p>
-<p>Well, it has the great benefit that we don't have to make up names for things. And it looks like a conventional (functional) programming language.</p>
+<p>Well, it has the benefit over the previous attempt that we don't have to make up names for things. And it looks like a conventional (functional) programming language.</p>
+<p>But in fact I think this is a problem. Whatever cellular is, it probably had better <em>not</em> look like a conventional programming language. Spreadsheet programmers don't get programming languages, otherwise they'd be programmers.</p>
+<p>My hypothesis here is that -- if we go back to the original tax calculation -- spreadsheet programmers think in a dataflow model. They start with the data (because it's concrete!) then that data is transformed in some way, then it's transformed in some other way, until we get to the answer.</p>
+<p>In contrast, the standard nested functional application is precisely the other way round: it says do X to the result of doing Y to the result of doing Z to A. Of course, we could unwrap the functions by naming the arguments -- but then we're back to the naming problem.</p>
 </aside>
 </section>
-<section id="language-tree" class="slide level2">
-<h1>Language tree</h1>
+<section id="from-program-to-spreadsheet-ii" class="slide level2">
+<h1>From program to spreadsheet (II)</h1>
+<p>Why not just write the spreadsheet as if you were writing a spreadsheet?</p>
+<div class="sourceCode"><pre class="sourceCode scheme"><code class="sourceCode scheme"><span class="dv">21000</span>             <span class="co">; Salary</span>
+<span class="dv">11000</span>             <span class="co">; Personal allowance</span>
+<span class="kw">-</span>                 <span class="co">; = Taxable income</span>
+<span class="fl">0.20</span>              <span class="co">; Basic rate</span>
+*                 <span class="co">; = Tax payable </span></code></pre></div>
+<ul>
+<li><p>No names; intuitive ordering</p></li>
+<li><p>Direct translation to spreadsheet graph</p></li>
+<li><p>But postfix languages haven't caught on. Why not?</p></li>
+</ul>
+<p>Still missing lambda abstractions, iteration, etc. But just as powerful as spreadsheet. Perhaps a good intermediate representation? (Provisional name &quot;nocell&quot;.)</p>
+<aside class="notes">
+
+</aside>
+</section>
+<section id="how-do-we-add-real-language-features" class="slide level2">
+<h1>How do we add &quot;real&quot; language features?</h1>
+</section>
+<section id="uncertainty" class="slide level2">
+<h1>Uncertainty</h1>
+<ul>
+<li><p>Don't reinvent the wheel</p></li>
+<li><p>Use existing language</p></li>
+</ul>
+</section>
+<section id="broad-architecture" class="slide level2">
+<h1>Broad architecture</h1>
+<p>Without uncertainty:</p>
 <figure>
 <img src="images/graphviz/languages.png" />
 </figure>
+<p>With uncertainty:</p>
+<figure>
+<img src="images/graphviz/languages-with-p.png" />
+</figure>
+</section>
+<section id="further-thoughts" class="slide level2">
+<h1>Further thoughts</h1>
+<ol type="1">
+<li><p>Layout is half the battle but if solved would encourage adoption.</p>
+<ul>
+<li>&quot;LaTeX for spreadsheets&quot;</li>
+</ul></li>
+<li><p>&quot;Compilation&quot; vs &quot;Generation&quot;.</p></li>
+<li><p>How to represent uncertain parameters in &quot;ordinary&quot; Excel?</p>
+<ul>
+<li>Or compile a &quot;probabilistic 'cell'&quot;?</li>
+</ul></li>
+</ol>
 </section>
 <section id="what-i-think-is-necessary-for-success" class="slide level2">
 <h1>What I think is necessary for success</h1>
 <ul>
-<li><p>Spreadsheets are a programming language -&gt; Extend this</p></li>
-<li><p>Spreadsheets are interactive -&gt; So are modern languages</p></li>
-<li><p>It's hard to format tables -&gt; Make this easy!</p></li>
-<li><p>Probability is impossible -&gt; Make it possible</p></li>
-<li><p>Incremental transition from easy to abstract.</p></li>
+<li><p>Must extend the &quot;natural&quot; language of spreadsheets</p></li>
+<li><p>Must allow incremental transition from easy to abstract</p></li>
+<li><p>Must be interactive</p>
+<ul>
+<li>eg, a &quot;REPL&quot; that generates a spreadsheet each time</li>
+</ul></li>
+<li><p>Must make some tasks <em>easier</em>. eg,</p>
+<ul>
+<li><p>Formatting tables (always a pain);</p></li>
+<li><p>Make probabilistic calculations possible.</p></li>
+</ul></li>
 </ul>
 </section>
 <section id="other-proposals" class="slide level2">
 <h1>Other proposals</h1>
 <ul>
-<li><p>Gencell</p></li>
-<li><p>User-centred functions</p></li>
-<li><p>ModelSheet Authoring</p></li>
+<li><p>Gencel (templates for Excel)</p></li>
+<li><p>User-centred functions (SPJ)</p></li>
+<li><p>ModelSheet Authoring (specific kinds of models)</p></li>
 <li><p>Tabular</p></li>
 <li><p>Improv</p></li>
-<li><p>Felienne</p></li>
-<li><p>Scenarios</p></li>
+<li><p>Scenarios (FW)</p></li>
 </ul>
 <aside class="notes">
 <p>One good question to ask is: what haven't these succeeded?</p>
@@ -344,10 +401,10 @@ B5 := B3 * B4</code></pre></div>
 <li>They involve extensions to Excel (breaks collaboration)</li>
 </ul>
 </aside>
-</section>
-<section id="uncertainty" class="slide level2">
-<h1>Uncertainty</h1>
 <!-- ============================= CHALLENGES ============================= -->
+</section>
+<section id="unused-slides" class="slide level2">
+<h1>UNUSED SLIDES</h1>
 </section>
 <section id="other-kinds-of-models" class="slide level2">
 <h1>Other kinds of models</h1>
@@ -357,12 +414,6 @@ B5 := B3 * B4</code></pre></div>
 <li><p>Agent-based simulation</p></li>
 <li><p>Equilibrium-finding</p></li>
 <li><p>“Full” Bayesian inference</p></li>
-</ul>
-</section>
-<section id="next-steps" class="slide level2">
-<h1>Next steps</h1>
-<ul>
-<li>Timing ...</li>
 </ul>
 </section>
     </div>
