@@ -1,4 +1,4 @@
-intro.html : introduction-to-cellular.md \
+index.html : introduction-to-cellular.md \
 		images/graphviz/eg-tax-calc-expression-tree.png \
 		images/graphviz/eg-tax-calc-expression-tree-linear.png \
 		images/graphviz/languages.png
