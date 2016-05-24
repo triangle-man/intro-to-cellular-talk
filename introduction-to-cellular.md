@@ -578,13 +578,13 @@ How do we add "real" language features?
 
 1. "Compile" a language to "nocell".
    
-   - Unwrap loops, expand functions, ...
+    - Unwrap loops, expand functions, ...
    
 2. Or make "cell" a "nocell"-generating language
 
-   - "Spreadsheets as values"
+    - "Spreadsheets as values"
    
-   - More interactive
+    - More interactive
 
 
 Uncertainty
