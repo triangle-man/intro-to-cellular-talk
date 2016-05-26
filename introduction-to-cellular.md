@@ -135,18 +135,20 @@ Google -- 2006
 
 <!-- ========================= TABLE OF CONTENTS ========================== -->
 
-* Background to spreadsheets
+Background to spreadsheet modelling
 
-* The challenge of doing better
+The challenge of doing better
 
-* Cellular
+Cellular
 
-* Open questions
+The challenge of doing cellular
 
 <!-- =================== A BRIEF HISTORY OF SPREADSHEETS ================== -->
 
-A brief history of spreadsheets
--------------------------------
+Background to spreadsheet modelling
+-----------------------------------
+
+-----------------
 
 ![](images/spreadsheet-history.png)
 
@@ -181,10 +183,10 @@ Excel has, perhaps, on the order of 750 million users.
 </div>
 
 
-Modelling with spreadsheets
----------------------------
+<!-- =================== THE CHALLENGE OF DOING BETTER  ================== -->
 
-<!-- ===================== MODELLING WITH SPREADSHEETS ==================== -->
+The challenge of doing better
+-----------------------------
 
 -----------------
 
@@ -223,8 +225,24 @@ Modelling with spreadsheets
 </div>
 
 
-Software development practices
-------------------------------
+How do we make good software in general?
+----------------------------------------
+
+> The art of programming is the art of organising complexity [...]
+> — *Edsger W. Dijkstra* (1930–2002)
+
+> Controlling complexity is the essence of computer programming.
+> — *Brian Kernighan* (1942–)
+
+1. Divide and conquer
+
+2. Say what you mean
+
+3. Don’t repeat yourself
+
+How does Excel do on these three measures?
+
+-------------
 
 * Separation of concerns (aka, divide and conquer)
 ![](images/ss-tabs.png){width=65%}
