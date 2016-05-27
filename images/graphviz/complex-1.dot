@@ -1,0 +1,31 @@
+digraph complex1 {
+	
+graph [rankdir = "TB"; ranksep = "0.25 equally"; pad = "0.5,0.2"];
+
+edge [color = "#9db5bd"];
+node [shape = none; color = "#9db5bd"; margin = "0.0,0.0"; height = "0.2"];
+
+{node [label = <&alpha;>]; alpha1; alpha2; alpha3;};
+{node [label = <&minus;>; shape = circle]; minus1; minus2; minus3;};
+{node [label = <&beta;>]; beta1; beta2; beta3;};
+{node [label = <&times;>; shape = circle]; times1; times2; times3;};
+{node [label = "+"; shape = circle]; plus}; 
+
+A -> alpha1 -> minus1 -> beta1 -> times1 -> B [style = invis];
+B -> alpha2 -> minus2 -> beta2 -> times2 -> C [style = invis];
+C -> alpha3 -> minus3 -> beta3 -> times3 [style = invis];
+
+{A alpha1} -> minus1 [constraint = FALSE];
+{B alpha2} -> minus2 [constraint = FALSE];
+{C alpha3} -> minus3 [constraint = FALSE];
+
+{minus1 beta1} -> times1 [constraint = FALSE];
+{minus2 beta2} -> times2 [constraint = FALSE];
+{minus3 beta3} -> times3 [constraint = FALSE];
+
+{times1 times2} -> plus [constraint = FALSE];
+
+times3 -> plus;
+
+
+}

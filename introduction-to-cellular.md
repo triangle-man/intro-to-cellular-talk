@@ -135,13 +135,13 @@ Google -- 2006
 
 <!-- ========================= TABLE OF CONTENTS ========================== -->
 
-Background to spreadsheet modelling
+### Background to spreadsheet modelling
 
-The challenge of doing better
+### The challenge of doing better
 
-Cellular
+### Cellular
 
-The challenge of doing cellular
+### The challenge of doing cellular
 
 <!-- =================== A BRIEF HISTORY OF SPREADSHEETS ================== -->
 
@@ -225,8 +225,8 @@ The challenge of doing better
 </div>
 
 
-How do we make good software in general?
-----------------------------------------
+How do we make good software anyway?
+------------------------------------
 
 > The art of programming is the art of organising complexity [...]
 > — *Edsger W. Dijkstra* (1930–2002)
@@ -234,27 +234,47 @@ How do we make good software in general?
 > Controlling complexity is the essence of computer programming.
 > — *Brian Kernighan* (1942–)
 
-1. Divide and conquer
+> There are two ways of constructing a software design: One way is to make it so
+> simple that there are obviously no deficiencies, and the other way is to make
+> it so complicated that there are no obvious deficiencies. 
+> — *C. A. R. Hoare* (1934–)
 
-2. Say what you mean
+<div class="notes">
+Okay, so how do we control complexity?
+</div>
 
-3. Don’t repeat yourself
 
-How does Excel do on these three measures?
+Modularity and abstraction
+--------------------------
 
--------------
+<table>
+<thead>
+<tr>
+<th width="20%" style="text-align: center;">Complex</th>
+<th width="40%" style="text-align: center;">Modular</th>
+<th width="40%" style="text-align: center;">Abstract</th>
+</tr>
+</thead>
+<tr>
+<td style="text-align: center; vertical-align: top;">
+![](images/graphviz/complex-1.png)
+</td>
+<td style="text-align: center; vertical-align: top; font-size: 70%;">
+![](images/graphviz/complex-2.png)
 
-* Separation of concerns (aka, divide and conquer)
-![](images/ss-tabs.png){width=65%}
+Decompose the system into separate, weakly-coupled parts, with
+well-defined interfaces between them.
+</td>
+<td style="text-align: center; vertical-align: top; font-size: 70%;">
+![](images/graphviz/complex-3.png)
 
-* Don't repeat yourself (aka, generalise)
-![](images/ss-dry-fail.png){width=65%}
+“Abstraction principle: Each significant piece of functionality in a program
+should be implemented in just one place in the source code. Where similar
+functions are carried out by distinct pieces of code, it is generally beneficial
+to combine them into one by *abstracting out* the varying parts.” 
 
-* Say what you mean (aka, abstract)
-```
-=IFERROR(INDEX(INDIRECT($C10 & ".Outputs[" & this.Year & "]"),
-               MATCH(G$5, INDIRECT($C10 & ".Outputs[Vector]"), 0)), 0)
-```
+— Benjamin C. Pierce, *Types and Programming Languages* 
+</td> </tr> </table>
 
 <div class="notes">
 
@@ -263,11 +283,45 @@ modellers. I'm going to spend some time on this slide and the next one.
 
 Consider in particular three good practices in software development. There are
 many practices, of course, such as: unit testing, requirements specification,
-coding conventions, and what have you; but these three seem to ne to get to the
+coding conventions, and what have you; but these two seem to ne to get to the
 essence of *programming* as opposed to an arbitrary technical design activity.
 
 First of all, if you have a complicated problem, you should break it down into
-subproblems, each of which is simpler.
+subproblems, each of which is simpler. Ideally, each subpart would do one,
+conceptually coherent, thing. Also, the connections between the subparts should
+be as simple as possible -- they should be "weakly coupled." All this means that
+one can worry about one subpart at a time.
+
+Second, there's a principle that's often expressed as "Don't repeat yourself."
+Any time you find yourself doing thing same thing over and over: don't. Write it
+once, in one place, and re-use the code you've written where you need it. Again,
+this means fewer places to look and therefore fewer things to worry about at
+once. 
+
+This second step often requires some kind of abstraction or generalisation. It's
+not always obvious that one is doing the same thing. Often, in fact, one is
+doing "the same thing, *mutatis mutandis*, and then the goal is to write a more
+general model that can be reused in specific circumstances. 
+
+</div>
+
+
+Spreadsheets *kind of* support modularity
+---------------------------------------
+
+* Worksheets are often used to separate concerns
+![](images/ss-tabs.png){width=65%}
+
+* Columns are often used to group elements of a repeated calculation
+![](images/ss-grouping.png){width=65%}
+
+* **But**: it's hard to define the "interfaces"
+```
+=IFERROR(INDEX(INDIRECT($C10 & ".Outputs[" & this.Year & "]"),
+               MATCH(G$5, INDIRECT($C10 & ".Outputs[Vector]"), 0)), 0)
+```
+
+<div class="notes">
 
 In some sense, Excel does quite well here. Of course, it's up to the modeller to
 correctly choose the subproblems, but once she does so, Excel provides some
@@ -300,16 +354,34 @@ nice to solve this problem once and allow modellers to re-use that solution. It
 would be even nicer if, when we discovered bugs in or made improvements to our
 common solution, those changes could painlessly be incorporated in users' models.
 
-And there's a further problem, which is related to the second practice. Only a
-certain kind of concern can be separated in Excel. Specifically, it must be a
-defined step in the data flow process.
+You know -- just to say -- looking at the third example, isn't it absolutely
+clear that if you can do *that* -- surely, *surely* you could write some code!
 
-What other concerns might there be? Well, one might wish to abstract some
-calculation and the re-use it. Here we have a problem. It is very hard to do
-this in Excel. About the best we can do is copy the calculation from one cell to
-another and make sure that references to other cells are made relative to the
-copied cell. We can assume that this is what was done, for example, in the
-Reinhart and Rogoff model.
+</div>
+
+Spreadsheets *do not* support abstraction
+-----------------------------------------
+
+*  Operations are repeated
+
+    ![](images/ss-dry-fail.png){width=65%}
+
+*  Large formulae are repeated
+
+    ```
+    =IFERROR(INDEX(INDIRECT($C10 & ".Outputs[" & this.Year & "]"),
+                   MATCH(G$5, INDIRECT($C10 & ".Outputs[Vector]"), 0)), 0)
+    ```
+
+* No structured data, higher-order functions, ...
+
+<div class="notes">
+
+One often wishes to abstract some calculation and the re-use it. It is very hard
+to do this in Excel. About the best we can do is copy the calculation from one
+cell to another and make sure that references to other cells are made relative
+to the copied cell. We can assume that this is what was done, for example, in
+the Reinhart and Rogoff model.
 
 Why is this a problem? It's a problem because we are repeating ourselves. Once
 we repeat ourselves, inevitably one of those repetitions will be wrong. There's
@@ -318,21 +390,20 @@ really are computing the same calculation."
 
 (Note to experienced modellers: array formulae are a thing that exists, of
 course. In some sense, array formulae are one of the most "Excel-like" things in
-Excel. But as you know, they have their own problems.)
+Excel. But as you know, they have their own problems. And VBA also exists but --
+at least in my view -- there is a huge impedance mismatch between the "Excel"
+way of doing things and the "VBA" way of doing things.)
 
-Repeating larger blocks is much harder. Typically tyhe problem is that you want
+Repeating larger blocks is much harder. Typically the problem is that you want
 to repeat something *mutatis mutandis* and so the question is, how do you
 explain which mutandis must be mutatis? Here's an example from the 2050
 Calculator.
-
-You know -- just to say -- looking at that, isn't it absolutely clear that if
-you can do *that* -- surely, *surely* you could write some code!
 
 Why did I write this monstrosity? So that an entire worksheet could be
 reproduced from a copy of another one, whilst making sure that the copy "knew"
 it was a copy.
 
-Actually, this example is a good illustration of the challenges of the third
+Look aActually, this example is a good illustration of the challenges of the third
 principle. What does all this palavar *mean*? In a spreadsheet, every expression
 is written at the lowest level -- the only level. To work out what something is
 trying to do it's necessary to, well, work it out. We get around this with
@@ -348,48 +419,56 @@ implemented in Excel, one has to encode them in character strings! That, right
 there, will be -- and was -- an enormous source of bugs when you want to create
 a similar model. 
 
-So our tasks is clear: figure out how to introduce these development practices
+So our task is clear: figure out how to introduce these development practices
 into a spreadsheet paradigm. But we must be careful.
 
 </div>
 
+So why do people use spreadsheets?
+----------------------------------
 
-Spreadsheet are ...
--------------------
+1. Incremental
+    
+	- You can start with very little knowledge
+	- Even the basic stuff is useful
+	- Even arranging numbers on the page is useful
+	- No big jumps
 
-1. Concrete (not abstract)
+2. Immediate
 
-2. Specific (not general)
+	- Changes are immediately reflected in the output
+	- Faster learning, quicker debugging
 
-3. Immediate (not deferred)
+3. ... and, perhaps, because abstraction is not easy
 
 <div class="notes">
 
 Here's our main problem. There's a *reason* that we can't apply those three
 software development practices in Excel, which is that spreadsheets don't
 support them. And the reason for that is that spreadsheets do support something
-else: they support people. Spreadsheets are concrete -- what you see is what
-there is. They are specific -- what they do is what they do. And they typically
-start with the data and transform it; rather than starting with a model and
-applying it to data. 
+else: they support people. 
 
-There's a reason for these design issues: they make spreadsheets usable by
-people. If we're going to fix the problems they bring, we're going to have to
-tread carefully.
+Spreadsheets are incremental. You can start small and build up in easy
+steps. And even the small stuff is useful. 
+
+They are immediate. If you like, the edit-compile-test loop is very, very
+fast. That makes learning easier and it makes debugging quicker. 
+
+And of course, they are not abstract, and perhaps abstraction is
+hard. Certainly, since there are no abstractions there are, *a fortiori*, no
+leaky abstractions.
+
+So if we are going to make something that people will use, we had better keep
+those features of spreadsheets that made them usable in the first place.  
 
 You know, there are two kinds of complexity in the world. 
 
 FIXME: Story of Ptolemaic epicycles (AD 100 ish) vs. Newton's laws (late 1600s) resulting in Keplerian
 motion (early 1610-1620s) 
 
-Spreadsheet programmers start with numbers. They organise these into tables,
-then they apply certain operations. At no time do they need to worry about
-names, although they can add names if they wish. 
-
 </div>
 
 
-<!-- ===================== MODELLING WITH SPREADSHEETS ==================== -->
 
 The plan
 --------
@@ -397,11 +476,22 @@ The plan
 1. Observe that spreadsheets are already a lot like a simplistic programming
    language
    
-2. Write this language explicitly, so that spreadsheets are written as programs 
-   (keeping the benefit/cost tradeoff positive!)
+2. Write this language explicitly, so that spreadsheets are written as programs
+
+    - whilst keeping the benefit/cost tradeoff positive!
    
-3. Generalise the language to include more powerful features (without losing the
-   ease of use!)
+3. Generalise the language to include more powerful features
+
+    - without losing the ease of use!
+
+
+
+<!-- ===================== THE PLAN ==================== -->
+
+Cellular
+--------
+
+### 1. Spreadsheets are programs
 
 
 Every spreadsheet is a graph
@@ -639,6 +729,13 @@ Further thoughts
 
 	- Or compile a "probabilistic 'cell'"?
 	
+
+<!-- ==================== THE CHALLENGES OF CELLULAR ====================== --> 
+-------------------------------------------------------------------------------
+
+The challenges of cellular
+--------------------------
+
 
 What I think is necessary for success
 -------------------------------------

@@ -1,0 +1,20 @@
+digraph complex3 {
+	
+graph [rankdir = "TB"; ranksep = "0.25 equally"; pad = "0.5,0.2"];
+
+edge [color = "#9db5bd"];
+node [shape = none; color = "#9db5bd"; margin = "0.0,0.0"; height = "0.2"];
+
+{node [label = "f"; shape = square; margin = "0.1,0.1"]; f1; f2; f3};
+{node [label = "+"; shape = circle]; plus}; 
+
+A -> f1;
+B -> f2;
+C -> f3;
+
+{f1 f2 f3} -> plus [ordering="in"]; 
+
+}
+
+
+

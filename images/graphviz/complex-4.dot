@@ -1,0 +1,28 @@
+digraph complex4 {
+
+graph [rankdir = "TB"; ranksep = "0.25 equally"; pad = "0.5,0.2"];
+
+edge [color = "#9db5bd"];
+node [shape = none; color = "#9db5bd"; margin = "0.0,0.0"; height = "0.2"];
+
+{node [label = <&minus;>; shape = circle]; minus}; 
+{node [label = <&times;>; shape = circle]; times}; 
+{node [label = <&alpha;>]; alpha};
+{node [label = <&beta;>]; beta;};
+
+
+subgraph clusterA {
+	color = "#f0e699";
+	minus [ordering ="in"];
+	{In alpha} -> minus;
+	{minus beta} -> times -> Out;
+}
+
+In1 [shape=point];
+Out1 [shape=point];
+
+In1 -> In
+Out -> Out1;
+
+}
+

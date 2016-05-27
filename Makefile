@@ -1,20 +1,18 @@
+graphdir = images/graphviz
+
 index.html : introduction-to-cellular.md \
-		images/graphviz/eg-tax-calc-expression-tree.png \
-		images/graphviz/eg-tax-calc-expression-tree-linear.png \
-		images/graphviz/languages.png \
-		images/graphviz/languages-with-p.png
+		$(graphdir)/eg-tax-calc-expression-tree.png \
+		$(graphdir)/eg-tax-calc-expression-tree-linear.png \
+		$(graphdir)/languages.png \
+		$(graphdir)/languages-with-p.png \
+		$(graphdir)/complex-1.png \
+                $(graphdir)/complex-2.png \
+                $(graphdir)/complex-2.png \
+
 	pandoc -t revealjs --standalone --data-dir=data -o $@ introduction-to-cellular.md
 
-images/graphviz/eg-tax-calc-expression-tree.png : images/graphviz/eg-tax-calc-expression-tree.dot
-	dot -Tpng $< > $@
+%.png : %.dot
+	dot -Tpng $< $@
 
-images/graphviz/eg-tax-calc-expression-tree-linear.png : images/graphviz/eg-tax-calc-expression-tree-linear.dot
-	dot -Tpng $< > $@
-
-images/graphviz/languages.png : images/graphviz/languages.dot
-	dot -Tpng $< > $@
-
-images/graphviz/languages-with-p.png : images/graphviz/languages-with-p.dot
-	dot -Tpng $< > $@
 
 
