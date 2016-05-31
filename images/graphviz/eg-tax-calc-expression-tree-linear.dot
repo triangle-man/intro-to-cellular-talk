@@ -4,7 +4,8 @@ graph [rankdir = "TB";
        pad = "0.5,0.2";
        ]
 
-edge [color = "#9db5bd"];
+       edge [color = "#9db5bd";
+	     dir = back];
 
 node [shape = circle;
       color = "#9db5bd";]

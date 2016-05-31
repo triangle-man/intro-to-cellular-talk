@@ -12,7 +12,7 @@ index.html : introduction-to-cellular.md \
 	pandoc -t revealjs --standalone --data-dir=data -o $@ introduction-to-cellular.md
 
 %.png : %.dot
-	dot -Tpng $< $@
+	dot -Tpng $< > $@
 
 
 
