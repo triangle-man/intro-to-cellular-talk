@@ -8,6 +8,7 @@ transition: fade
 transitionSpeed: fast
 controls: !!str false
 center: true
+slideNumber: true
 ...
 
 The West Coast Mainline débâcle
@@ -141,7 +142,7 @@ Google -- 2006
 
 ### Cellular
 
-### The challenge of doing cellular
+### Uncertainty
 
 <!-- =================== A BRIEF HISTORY OF SPREADSHEETS ================== -->
 
@@ -257,16 +258,16 @@ Modularity and abstraction
 </thead>
 <tr>
 <td style="text-align: center; vertical-align: top;">
-![](images/graphviz/complex-1.png)
+![](images/graphviz/complex-1.svg)
 </td>
 <td style="text-align: center; vertical-align: top; font-size: 70%;">
-![](images/graphviz/complex-2.png)
+![](images/graphviz/complex-2.svg)
 
 Decompose the system into separate, weakly-coupled parts, with
 well-defined interfaces between them.
 </td>
 <td style="text-align: center; vertical-align: top; font-size: 70%;">
-![](images/graphviz/complex-3.png)
+![](images/graphviz/complex-3.svg)
 
 “Abstraction principle: Each significant piece of functionality in a program
 should be implemented in just one place in the source code. Where similar
@@ -427,14 +428,13 @@ into a spreadsheet paradigm. But we must be careful.
 So why do people use spreadsheets?
 ----------------------------------
 
-1. Incremental
-    
-	- You can start with very little knowledge
-	- Even the basic stuff is useful
-	- Even arranging numbers on the page is useful
-	- No big jumps
+1. Spreadsheets are incremental
 
-2. Immediate
+	- Start small, gradually get better 
+	- Even the basic stuff is useful (eg, making tables)
+	- No big jumps in learning 
+
+2. Spreadsheets are immediate
 
 	- Changes are immediately reflected in the output
 	- Faster learning, quicker debugging
@@ -491,12 +491,12 @@ The plan
 Cellular
 --------
 
-### 1. Spreadsheets are programs
+Every spreadsheet is a term graph
+---------------------------------
 
-
-Every spreadsheet is a graph
-----------------------------
-
+<table>
+<tr>
+<td style="width: 55%; vertical-align: middle;">
 ```
    |       A         |      B     |
 ===+=================+============+
@@ -506,8 +506,16 @@ Every spreadsheet is a graph
  4 | Basic rate      |        0.2 |
  5 | Tax payable     |  = B3 * B4 |
 ```
+</td>
+<td style="vertical-align: middle;">
+![](images/graphviz/eg-tax-calc-expression-tree.svg)
+</td>
+</tr>
+</table>
 
-![](images/graphviz/eg-tax-calc-expression-tree.png)
+Very simple term graph: only values and built-in functions. No user-defined
+types, no lambda abstractions, no first-class functions, no iteration or
+recursion. 
 
 <div class="notes">
 
@@ -533,24 +541,33 @@ Some cells in this example have no dependencies nor are dependent on other
 cells: these are the labels, which I think are akin to comments in a program.
 
 Well, now we have an expression graph. In fact, we have what looks very like an
-abstract syntax tree, such as built by a compiler. In which case, we ought to be
-able to write down one or more languages which "compile to" precisely this
+abstract symantic graph, such as built by a compiler. In which case, we ought to
+be able to write down one or more languages which "compile to" precisely this
 expression graph.
 
-This language be extremely simple: it is a purely functional language with
+This language is extremely simple: it is a purely functional language with
 neither iteration nor recursion; nor are functions first-class values.
 
 </div>
 
 
-From spreadsheet to program
----------------------------
+Term graphs are programs
+------------------------
 
+<table>
+<tbody>
+<tr>
+<td style="vertical-align: middle;">
 Topological sort:
-
-![](images/graphviz/eg-tax-calc-expression-tree-linear.png)
-
+</td>
+<td style="vertical-align: middle;">
+![](images/graphviz/eg-tax-calc-expression-tree-linear.svg)
+</td>
+</tr>
+<td style="vertical-align: middle;">
 Then write out each step:
+</td>
+<td>
 ```pascal
 B1 := 21000
 B2 := 11000
@@ -558,9 +575,15 @@ B3 := B1 - B2
 B4 := 0.20
 B5 := B3 * B4
 ```
+</td>
+</tr>
+<tr/>
+</tbody>
+</table>
 
-In my view, the burden of naming is too high. But this language ("grid"?) could be used as
-a "universal spreadsheet language".
+Poor choice of surface syntax for users: too many definitions. But perhaps
+useful as a target language which can then be used to generate any particular
+spreadsheet (Excel, Numbers, ...)
 
 <div class="notes">
 
@@ -607,24 +630,33 @@ I propose the name "grid" for this language (which is still somewhat undefined).
 
 </div>
 
+A possible language hierarchy
+-----------------------------
 
-From program to spreadsheet (I)
--------------------------------
+![](images/graphviz/languages.svg)
 
-Conventional function syntax (built-in functions only):
+
+----------- -----------------------------------------------
+**cell**    Full language, supporting abstraction and modularity. Ideally, a superset of nocell.
+**nocell**  A language with the same expressive power as a spreadsheet (and no more) but a more convenient surface syntax.
+**grid**    An intermediate representation of a spreadsheet, from which a number of backends could produce specific formats.
+----------- -----------------------------------------------
+
+(No probabilistic elements yet.)
+
+
+What's the surface syntax of cell/nocell?
+-----------------------------------------
+
+* Perhaps a conventional function syntax?
 ```C
 times(0.20, minus(21000, 11000))
 ```
 
-Then:
+* Hypothesis: inversion of "data flow programming" mindset familiar to spreadsheet
+  modellers is a barrier. (cf. magrittr in R.)
 
-1. Generate expression graph
-2. Find its topological sort
-3. Generate "single static assignment"
-4. Lay out the result (in some clever way)
 
-Hypothesis: inversion of "data flow programming" mindset familiar to spreadsheet
-modellers is a barrier. (cf. magrittr in R.)
 
 <div class="notes">
 
@@ -651,8 +683,8 @@ we're back to the naming problem.
 </div>
 
 
-From program to spreadsheet (II)
---------------------------------
+Alternative forms of surface syntax
+-----------------------------------
 
 Why not just write the spreadsheet as if you were writing a spreadsheet?
 ```scheme
@@ -663,36 +695,64 @@ Why not just write the spreadsheet as if you were writing a spreadsheet?
 *                 ; = Tax payable 
 ```
 
-* No names; intuitive ordering
+* No names
 
-* Direct translation to spreadsheet graph
+* Order parallels order of construction of spreadsheet
+
+* Lends itself to building "collections of data" in an interactive manner (see later)
 
 * But postfix languages haven't caught on. Why not?
 
-Still missing lambda abstractions, iteration, etc. But just as powerful as
-spreadsheet. Perhaps a good intermediate representation? (Provisional name
-"nocell".)
 
 <div class="notes">
-
-
-
-
 </div>
 
 
-How do we add "real" language features?
+Layout: the other half of the challenge
 ---------------------------------------
 
-1. "Compile" a language to "nocell".
+![](images/ucl-finances.png){width=80%}
+
+
+Summary
+-------
+
+<table>
+<tr>
+<td></td>
+<th>cell</th>
+<th>nocell</th>
+<th>grid</th>
+</tr>
+<tr>
+<th>Semantics</th>
+<td></td><td></td><td></td>
+</tr>
+<tr>
+<th>Surface syntax</th>
+<td></td><td></td><td></td>
+</tr>
+<tr>
+<th>Other</th>
+<td></td><td></td><td></td>
+</tr>
+</table>
+
+
+
+Open questions
+--------------
+
+
+1. Does cell ‘compile’ to nocell?
    
     - Unwrap loops, expand functions, ...
    
-2. Or make "cell" a "nocell"-generating language
+2. Or is cell a ‘nocell-constructing’ language?
 
     - "Spreadsheets as values"
    
-    - More interactive
+    - More interactive.
 
 
 Uncertainty
@@ -708,11 +768,11 @@ Broad architecture
 
 Without uncertainty:
 
-![](images/graphviz/languages.png)
+![](images/graphviz/languages.svg)
 
 With uncertainty:
 
-![](images/graphviz/languages-with-p.png)
+![](images/graphviz/languages-with-p.svg)
 
 
 
@@ -740,6 +800,12 @@ The challenges of cellular
 What I think is necessary for success
 -------------------------------------
 
+* Must make some tasks **easier**. eg, 
+
+	- Formatting tables (always a pain);
+	
+	- Make probabilistic calculations possible.
+
 * Must extend the "natural" language of spreadsheets 
 
 * Must allow incremental transition from easy to abstract
@@ -748,20 +814,13 @@ What I think is necessary for success
 
 	- eg, a "REPL" that generates a spreadsheet each time
 
-* Must make some tasks *easier*. eg, 
-
-	- Formatting tables (always a pain);
-	
-	- Make probabilistic calculations possible.
-
-
 
 Other proposals
 ---------------
 
-* Gencel (templates for Excel)
-
 * User-centred functions (SPJ)
+
+* Gencel (templates for Excel)
 
 * ModelSheet Authoring (specific kinds of models)
 
@@ -770,6 +829,8 @@ Other proposals
 * Improv
 
 * Scenarios (FW)
+
+### All of these use the spreadsheet as the GUI
 
 <div class="notes">
 One good question to ask is: what haven't these succeeded?

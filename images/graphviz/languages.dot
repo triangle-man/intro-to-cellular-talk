@@ -8,10 +8,13 @@ graph [rankdir = "LR";
        node [shape = box;
 	     color = "#9db5bd"];
        
-	     cell -> nocell [label = "'compilation'"];
-	     nocell -> grid [label = "layout"];
-	     grid -> Excel [label = "target specific"];
-
+	     cell -> nocell;
+	     
+	     nocell -> grid;
+	     
+	     grid -> {node [fontsize = 10; shape = oval];
+		     Excel LibreOffice "..."};
+	     
 }
 
        

@@ -141,7 +141,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <h3 id="background-to-spreadsheet-modelling">Background to spreadsheet modelling</h3>
 <h3 id="the-challenge-of-doing-better">The challenge of doing better</h3>
 <h3 id="cellular">Cellular</h3>
-<h3 id="the-challenge-of-doing-cellular">The challenge of doing cellular</h3>
+<h3 id="uncertainty">Uncertainty</h3>
 <!-- =================== A BRIEF HISTORY OF SPREADSHEETS ================== -->
 </section>
 <section id="background-to-spreadsheet-modelling-1" class="slide level2">
@@ -230,17 +230,17 @@ Abstract
 </thead>
 <tr>
 <td style="text-align: center; vertical-align: top;">
-<img src="images/graphviz/complex-1.png" />
+<img src="images/graphviz/complex-1.svg" />
 </td>
 <td style="text-align: center; vertical-align: top; font-size: 70%;">
 <figure>
-<img src="images/graphviz/complex-2.png" />
+<img src="images/graphviz/complex-2.svg" />
 </figure>
 Decompose the system into separate, weakly-coupled parts, with well-defined interfaces between them.
 </td>
 <td style="text-align: center; vertical-align: top; font-size: 70%;">
 <figure>
-<img src="images/graphviz/complex-3.png" />
+<img src="images/graphviz/complex-3.svg" />
 </figure>
 <p>“Abstraction principle: Each significant piece of functionality in a program should be implemented in just one place in the source code. Where similar functions are carried out by distinct pieces of code, it is generally beneficial to combine them into one by <em>abstracting out</em> the varying parts.”</p>
 — Benjamin C. Pierce, <em>Types and Programming Languages</em>
@@ -299,14 +299,13 @@ Decompose the system into separate, weakly-coupled parts, with well-defined inte
 <section id="so-why-do-people-use-spreadsheets" class="slide level2">
 <h1>So why do people use spreadsheets?</h1>
 <ol type="1">
-<li><p>Incremental</p>
+<li><p>Spreadsheets are incremental</p>
 <ul>
-<li>You can start with very little knowledge</li>
-<li>Even the basic stuff is useful</li>
-<li>Even arranging numbers on the page is useful</li>
-<li>No big jumps</li>
+<li>Start small, gradually get better</li>
+<li>Even the basic stuff is useful (eg, making tables)</li>
+<li>No big jumps in learning</li>
 </ul></li>
-<li><p>Immediate</p>
+<li><p>Spreadsheets are immediate</p>
 <ul>
 <li>Changes are immediately reflected in the output</li>
 <li>Faster learning, quicker debugging</li>
@@ -340,10 +339,12 @@ Decompose the system into separate, weakly-coupled parts, with well-defined inte
 </section>
 <section id="cellular-1" class="slide level2">
 <h1>Cellular</h1>
-<h3 id="spreadsheets-are-programs">Spreadsheets are programs</h3>
 </section>
-<section id="every-spreadsheet-is-a-graph" class="slide level2">
-<h1>Every spreadsheet is a graph</h1>
+<section id="every-spreadsheet-is-a-term-graph" class="slide level2">
+<h1>Every spreadsheet is a term graph</h1>
+<table>
+<tr>
+<td style="width: 55%; vertical-align: middle;">
 <pre><code>   |       A         |      B     |
 ===+=================+============+
  1 | Salary          |      21000 |
@@ -351,31 +352,49 @@ Decompose the system into separate, weakly-coupled parts, with well-defined inte
  3 | Taxable income  |  = B1 - B2 |
  4 | Basic rate      |        0.2 |
  5 | Tax payable     |  = B3 * B4 |</code></pre>
-<figure>
-<img src="images/graphviz/eg-tax-calc-expression-tree.png" />
-</figure>
+</td>
+<td style="vertical-align: middle;">
+<img src="images/graphviz/eg-tax-calc-expression-tree.svg" />
+</td>
+</tr>
+</table>
+<p>Very simple term graph: only values and built-in functions. No user-defined types, no lambda abstractions, no first-class functions, no iteration or recursion.</p>
 <aside class="notes">
 <p>Here is a simple model written as a spreadsheet. It's a typical spreadsheet model. Computation proceeds from inputs to outputs; in this case from top-to-bottom. It's considered good design practice to lay out a spreadsheet in this way to aid in comprehension. In some sense, it's a primitive form of information hiding: if you want to find the values that enter into a particular computation you know that must look above the cell containing the computation.</p>
 <p>The cells of any spreadsheet can be arranged as the nodes in a directed graph. A node in this graph is either a value or an expression of the values in other nodes and the arrows of the graph show which cells depend on which others. I am going to leave out the comments for these examples but clearly part of the challenge will be to figure out how to incorporate them since they play a key role in real spreadsheets.</p>
 <p>The graph is acyclic: Excel will complain if the spreadsheet contains what it calls &quot;circular references&quot;. It is possible to force Excel to allow cycles, but models incorporating such features are thought of as something of a hack.</p>
 <p>Some cells in this example have no dependencies nor are dependent on other cells: these are the labels, which I think are akin to comments in a program.</p>
-<p>Well, now we have an expression graph. In fact, we have what looks very like an abstract syntax tree, such as built by a compiler. In which case, we ought to be able to write down one or more languages which &quot;compile to&quot; precisely this expression graph.</p>
-<p>This language be extremely simple: it is a purely functional language with neither iteration nor recursion; nor are functions first-class values.</p>
+<p>Well, now we have an expression graph. In fact, we have what looks very like an abstract symantic graph, such as built by a compiler. In which case, we ought to be able to write down one or more languages which &quot;compile to&quot; precisely this expression graph.</p>
+<p>This language is extremely simple: it is a purely functional language with neither iteration nor recursion; nor are functions first-class values.</p>
 </aside>
 </section>
-<section id="from-spreadsheet-to-program" class="slide level2">
-<h1>From spreadsheet to program</h1>
-<p>Topological sort:</p>
-<figure>
-<img src="images/graphviz/eg-tax-calc-expression-tree-linear.png" />
-</figure>
-<p>Then write out each step:</p>
+<section id="term-graphs-are-programs" class="slide level2">
+<h1>Term graphs are programs</h1>
+<table>
+<tbody>
+<tr>
+<td style="vertical-align: middle;">
+Topological sort:
+</td>
+<td style="vertical-align: middle;">
+<img src="images/graphviz/eg-tax-calc-expression-tree-linear.svg" />
+</td>
+</tr>
+<td style="vertical-align: middle;">
+Then write out each step:
+</td>
+<td>
 <div class="sourceCode"><pre class="sourceCode pascal"><code class="sourceCode pascal">B1 := <span class="dv">21000</span>
 B2 := <span class="dv">11000</span>
 B3 := B1 - B2
 B4 := <span class="dv">0.20</span>
 B5 := B3 * B4</code></pre></div>
-<p>In my view, the burden of naming is too high. But this language (&quot;grid&quot;?) could be used as a &quot;universal spreadsheet language&quot;.</p>
+</td>
+</tr>
+<tr/>
+</tbody>
+</table>
+<p>Poor choice of surface syntax for users: too many definitions. But perhaps useful as a target language which can then be used to generate any particular spreadsheet (Excel, Numbers, ...)</p>
 <aside class="notes">
 <p>Here's one approach, which is almost a direct translation of the spreadsheet. We take the expression graph of the spreadsheet and linearise it. Note that</p>
 <p>Then we simply bind the value of each node to a different symbol. Here I've chosen the symbols to be precisely the names of the cells that gave rise to this graph.</p>
@@ -390,18 +409,36 @@ B5 := B3 * B4</code></pre></div>
 <p>I propose the name &quot;grid&quot; for this language (which is still somewhat undefined).</p>
 </aside>
 </section>
-<section id="from-program-to-spreadsheet-i" class="slide level2">
-<h1>From program to spreadsheet (I)</h1>
-<p>Conventional function syntax (built-in functions only):</p>
-<div class="sourceCode"><pre class="sourceCode c"><code class="sourceCode c">times(<span class="fl">0.20</span>, minus(<span class="dv">21000</span>, <span class="dv">11000</span>))</code></pre></div>
-<p>Then:</p>
-<ol type="1">
-<li>Generate expression graph</li>
-<li>Find its topological sort</li>
-<li>Generate &quot;single static assignment&quot;</li>
-<li>Lay out the result (in some clever way)</li>
-</ol>
-<p>Hypothesis: inversion of &quot;data flow programming&quot; mindset familiar to spreadsheet modellers is a barrier. (cf. magrittr in R.)</p>
+<section id="a-possible-language-hierarchy" class="slide level2">
+<h1>A possible language hierarchy</h1>
+<figure>
+<img src="images/graphviz/languages.svg" />
+</figure>
+<table>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong>cell</strong></td>
+<td>Full language, supporting abstraction and modularity. Ideally, a superset of nocell.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>nocell</strong></td>
+<td>A language with the same expressive power as a spreadsheet (and no more) but a more convenient surface syntax.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>grid</strong></td>
+<td>An intermediate representation of a spreadsheet, from which a number of backends could produce specific formats.</td>
+</tr>
+</tbody>
+</table>
+<p>(No probabilistic elements yet.)</p>
+</section>
+<section id="whats-the-surface-syntax-of-cellnocell" class="slide level2">
+<h1>What's the surface syntax of cell/nocell?</h1>
+<ul>
+<li><p>Perhaps a conventional function syntax?</p>
+<div class="sourceCode"><pre class="sourceCode c"><code class="sourceCode c">times(<span class="fl">0.20</span>, minus(<span class="dv">21000</span>, <span class="dv">11000</span>))</code></pre></div></li>
+<li><p>Hypothesis: inversion of &quot;data flow programming&quot; mindset familiar to spreadsheet modellers is a barrier. (cf. magrittr in R.)</p></li>
+</ul>
 <aside class="notes">
 <p>What about conventional syntax?</p>
 <p>Well, it has the benefit over the previous attempt that we don't have to make up names for things. And it looks like a conventional (functional) programming language.</p>
@@ -410,8 +447,8 @@ B5 := B3 * B4</code></pre></div>
 <p>In contrast, the standard nested functional application is precisely the other way round: it says do X to the result of doing Y to the result of doing Z to A. Of course, we could unwrap the functions by naming the arguments -- but then we're back to the naming problem.</p>
 </aside>
 </section>
-<section id="from-program-to-spreadsheet-ii" class="slide level2">
-<h1>From program to spreadsheet (II)</h1>
+<section id="alternative-forms-of-surface-syntax" class="slide level2">
+<h1>Alternative forms of surface syntax</h1>
 <p>Why not just write the spreadsheet as if you were writing a spreadsheet?</p>
 <div class="sourceCode"><pre class="sourceCode scheme"><code class="sourceCode scheme"><span class="dv">21000</span>             <span class="co">; Salary</span>
 <span class="dv">11000</span>             <span class="co">; Personal allowance</span>
@@ -419,30 +456,87 @@ B5 := B3 * B4</code></pre></div>
 <span class="fl">0.20</span>              <span class="co">; Basic rate</span>
 *                 <span class="co">; = Tax payable </span></code></pre></div>
 <ul>
-<li><p>No names; intuitive ordering</p></li>
-<li><p>Direct translation to spreadsheet graph</p></li>
+<li><p>No names</p></li>
+<li><p>Order parallels order of construction of spreadsheet</p></li>
+<li><p>Lends itself to building &quot;collections of data&quot; in an interactive manner (see later)</p></li>
 <li><p>But postfix languages haven't caught on. Why not?</p></li>
 </ul>
-<p>Still missing lambda abstractions, iteration, etc. But just as powerful as spreadsheet. Perhaps a good intermediate representation? (Provisional name &quot;nocell&quot;.)</p>
 <aside class="notes">
 
 </aside>
 </section>
-<section id="how-do-we-add-real-language-features" class="slide level2">
-<h1>How do we add &quot;real&quot; language features?</h1>
+<section id="layout-the-other-half-of-the-challenge" class="slide level2">
+<h1>Layout: the other half of the challenge</h1>
+<figure>
+<img src="images/ucl-finances.png" style="width:80.0%" />
+</figure>
+</section>
+<section id="summary" class="slide level2">
+<h1>Summary</h1>
+<table>
+<tr>
+<td>
+</td>
+<th>
+cell
+</th>
+<th>
+nocell
+</th>
+<th>
+grid
+</th>
+</tr>
+<tr>
+<th>
+Semantics
+</th>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<th>
+Surface syntax
+</th>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<th>
+Other
+</th>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+</table>
+</section>
+<section id="open-questions" class="slide level2">
+<h1>Open questions</h1>
 <ol type="1">
-<li><p>&quot;Compile&quot; a language to &quot;nocell&quot;.</p>
+<li><p>Does cell ‘compile’ to nocell?</p>
 <ul>
 <li>Unwrap loops, expand functions, ...</li>
 </ul></li>
-<li><p>Or make &quot;cell&quot; a &quot;nocell&quot;-generating language</p>
+<li><p>Or is cell a ‘nocell-constructing’ language?</p>
 <ul>
 <li><p>&quot;Spreadsheets as values&quot;</p></li>
-<li><p>More interactive</p></li>
+<li><p>More interactive.</p></li>
 </ul></li>
 </ol>
 </section>
-<section id="uncertainty" class="slide level2">
+<section id="uncertainty-1" class="slide level2">
 <h1>Uncertainty</h1>
 <ul>
 <li><p>Don't reinvent the wheel</p></li>
@@ -453,11 +547,11 @@ B5 := B3 * B4</code></pre></div>
 <h1>Broad architecture</h1>
 <p>Without uncertainty:</p>
 <figure>
-<img src="images/graphviz/languages.png" />
+<img src="images/graphviz/languages.svg" />
 </figure>
 <p>With uncertainty:</p>
 <figure>
-<img src="images/graphviz/languages-with-p.png" />
+<img src="images/graphviz/languages-with-p.svg" />
 </figure>
 </section>
 <section id="further-thoughts" class="slide level2">
@@ -483,29 +577,30 @@ B5 := B3 * B4</code></pre></div>
 <section id="what-i-think-is-necessary-for-success" class="slide level2">
 <h1>What I think is necessary for success</h1>
 <ul>
+<li><p>Must make some tasks <strong>easier</strong>. eg,</p>
+<ul>
+<li><p>Formatting tables (always a pain);</p></li>
+<li><p>Make probabilistic calculations possible.</p></li>
+</ul></li>
 <li><p>Must extend the &quot;natural&quot; language of spreadsheets</p></li>
 <li><p>Must allow incremental transition from easy to abstract</p></li>
 <li><p>Must be interactive</p>
 <ul>
 <li>eg, a &quot;REPL&quot; that generates a spreadsheet each time</li>
 </ul></li>
-<li><p>Must make some tasks <em>easier</em>. eg,</p>
-<ul>
-<li><p>Formatting tables (always a pain);</p></li>
-<li><p>Make probabilistic calculations possible.</p></li>
-</ul></li>
 </ul>
 </section>
 <section id="other-proposals" class="slide level2">
 <h1>Other proposals</h1>
 <ul>
-<li><p>Gencel (templates for Excel)</p></li>
 <li><p>User-centred functions (SPJ)</p></li>
+<li><p>Gencel (templates for Excel)</p></li>
 <li><p>ModelSheet Authoring (specific kinds of models)</p></li>
 <li><p>Tabular</p></li>
 <li><p>Improv</p></li>
 <li><p>Scenarios (FW)</p></li>
 </ul>
+<h3 id="all-of-these-use-the-spreadsheet-as-the-gui">All of these use the spreadsheet as the GUI</h3>
 <aside class="notes">
 <p>One good question to ask is: what haven't these succeeded?</p>
 <ul>
@@ -542,6 +637,8 @@ B5 := B3 * B4</code></pre></div>
       Reveal.initialize({
         // Display controls in the bottom right corner
         controls: false,
+        // Display the page number of the current slide
+        slideNumber: true,
         // Vertical centering of slides
         center: true,
         // Transition style

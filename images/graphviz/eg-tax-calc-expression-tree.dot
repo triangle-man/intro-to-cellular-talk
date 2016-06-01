@@ -4,14 +4,18 @@ graph [rankdir = "TB";
        pad = "0.5,0.2";
        ]
 
-edge [color = "#9db5bd"];
+edge [color = "#3a6b7b"];
 
 node [shape = circle;
-      color = "#9db5bd"];
+      color = "#3a6b7b"];
 
 "−" -> {node [shape = box];
 	"21000" "11000"};
 
 "×" -> {"−" " 0.20 " [shape = box]};
+
+"21000" [xlabel = <<font color="#9db5bd">Value</font>>];
+"−" [xlabel = <<font color="#9db5bd">Built-in function</font>>];
+
 
 }
