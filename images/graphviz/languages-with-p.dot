@@ -8,11 +8,17 @@ graph [rankdir = "LR";
        node [shape = box;
 	     color = "#9db5bd"];
        
-	     cell -> nocell -> grid -> Excel;
+	     "cell+" -> "nocell+";
+	     
+	     "nocell+" -> grid;
 
-	     "Bugs?" [shape = circle];
-	     
-	     cell -> "Bugs?" -> nocell;
-	     
+	     PPL [shape = hexagon];
+	     "nocell+" -> PPL -> "grid";
+	     	     	     
+	     grid -> {node [fontsize = 10; shape = oval];
+		     Excel LibreOffice "..."};
 	     
 }
+
+
+

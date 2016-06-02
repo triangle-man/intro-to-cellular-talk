@@ -653,9 +653,15 @@ What's the surface syntax of cell/nocell?
 times(0.20, minus(21000, 11000))
 ```
 
-* Hypothesis: inversion of "data flow programming" mindset familiar to spreadsheet
-  modellers is a barrier. (cf. magrittr in R.)
-
+* **But** spreadsheet modellers tend to think in terms of a "data-flow" model:
+  Here's some data; here's the operation; here's the result; here's an operation
+  on that ... 
+  
+* cf. the R package ‘magrittr’, which allows one to write, eg,
+```R
+data %>% filter() %>% summarise()
+```
+* => Can we retain this style of interactive / incremental programming?
 
 
 <div class="notes">
@@ -687,25 +693,76 @@ Alternative forms of surface syntax
 -----------------------------------
 
 Why not just write the spreadsheet as if you were writing a spreadsheet?
-```scheme
-21000             ; Salary
-11000             ; Personal allowance
--                 ; = Taxable income
-0.20              ; Basic rate
-*                 ; = Tax payable 
-```
 
-* No names
+<table>
+<tr>
+<th width="50%"> Postfix </th>
+<th> Spreadsheet-y </th>
+</tr>
+<tr>
+<td width="50%" style="font-size: 90%;">
+```scheme
+21000      ; Salary
+11000      ; Personal allowance
+-          ; = Taxable income
+0.20       ; Basic rate
+*          ; = Tax payable 
+```
+</td>
+<td style="font-size: 90%;">
+```scheme
+21000      ; Salary
+11000 -    ; less, Personal allowance
+=          ; Taxable income
+ 0.20 *    ; Basic rate
+=          ; Tax payable
+```
+</td>
+</tr>
+<tr>
+<td style="font-size: 70%; vertical-align: top;">
+* No names (‘;’ means ‘comment’)
 
 * Order parallels order of construction of spreadsheet
 
-* Lends itself to building "collections of data" in an interactive manner (see later)
+* Lends itself to building “collections of data” in an interactive manner (see later)
 
-* But postfix languages haven't caught on. Why not?
+* But postfix languages haven't caught on. (Why not?)
+</td>
+<td style="font-size: 70%; vertical-align: top;">
+* Reminiscent of a printing calculator
 
+* ‘=’ here means “don’t do anything, but let me label this cell in the comments”
+
+* Other ideas for usable syntax: 
+    - ‘=’ means “function application” (like Excel?!)
+	- ‘(...)’ means “... is in infix notation”
+	
+</td>
+</tr>
+</table>
 
 <div class="notes">
+The thing I have to say here is, I think we just need to get something working
+and then iterate,
 </div>
+
+
+
+Open questions
+--------------
+
+1.  Does cell “compile” to nocell?
+
+    - Unwrap loops, expand functions, ...
+   
+2.  Or is it a “nocell-constructing” language?
+
+    - “Spreadsheets as values”
+
+    - It would be ideal if, every time the user hits ‘return’, the
+	  spreadsheet-so-far is generated, and that spreadsheet is the same as the
+	  one obtained by compiling/running the program so far.
 
 
 Layout: the other half of the challenge
@@ -713,102 +770,136 @@ Layout: the other half of the challenge
 
 ![](images/ucl-finances.png){width=80%}
 
+<div class="notes">
+
+It's clear that we could translate the operational part of programs written in a
+simple language like nocell into a spreadsheet simply by converting each node in
+the tree to a cell. It's reasonably plausible that we could make a more
+expressive language which is then evaluated to produce a nocell program by
+instantiating function bodies explicitly, unravelling loops, and so on.
+
+But the resulting spreadsheet is likely to be unreadable and that would defeat
+the whole purpose of cellular.
+
+So a huge challenge is as follows: how do we translate the semantic information
+inherent in the language cell to a well-structured spreadsheet? 
+
+Some things are clear from traditional principles of good spreadsheet design:
+the values of function application should be in cells below or to the right of
+their arguments, for example. The equivalent of vector datatypes should be in
+contiguous blocks of cells if possible. 
+
+Plausibly, most high-level operations that are used by spreadsheet models are
+map/reduce type operations. Those should be laid out in contiguous cells as
+well.
+
+Some things are easy: we know what counts as sub-calculations, so we can provide
+appropriate formatting to each cell. 
+
+This is a challenge -- but I also think it's an enormous opportunity.
+
+Making nice-looking, well-structured tables out of data is notoriously hard. A
+recent article in Significance called in "making sunbeams from cucumbers". If we
+could provide a mechanism that made it *easier* for people to make tables, that
+would be a reason to use the software, and could overcome analyst's natural
+reluctance to move beyond Excel.
+
+I don't have an answer, but it feels like an answerable task. I think perhaps we
+should be thinking in terms of types, as in data types. It feels to me that
+tables are a visual representation of algebraic data types. To be explored.
+
+</div>
+
 
 Summary
 -------
 
 <table>
 <tr>
-<td></td>
-<th>cell</th>
-<th>nocell</th>
-<th>grid</th>
+<th width="10%"></th>
+<th width="30%"> cell </th>
+<th width="30%"> nocell </th>
+<th width="30%"> grid </th>
 </tr>
 <tr>
-<th>Semantics</th>
-<td></td><td></td><td></td>
+<th style="font-size: 70%;"> Semantics </th>
+<td style="font-size: 70%;">
+Functional, first-class functions, rich set of data types, user-defined data types,
+</td>
+<td style="font-size: 70%;">
+Purely functional, primitive types only (numeric, string, boolean, perhaps vector), built-in
+functions only, names.
+</td>
+<td style="font-size: 70%;">
+Like nocell, but every expression assigned to a cell. Names changed to named ranges.
+</td>
 </tr>
 <tr>
-<th>Surface syntax</th>
-<td></td><td></td><td></td>
+<th style="font-size: 70%;"> Surface syntax </th>
+<td style="font-size: 70%;">
+?
+</td>
+<td style="font-size: 70%;">
+```scheme
+100
+200
+300
+sum
+```
+</td>
+<td style="font-size: 70%;">
+```pascal
+A1 := 100
+A2 := 200
+A3 := 300
+A4 := SUM(A1, A2, A3)
+```
+</td>
 </tr>
 <tr>
-<th>Other</th>
-<td></td><td></td><td></td>
+<th style="font-size: 70%;"> Other </th>
+<td style="font-size: 70%;">
+</td>
+<td style="font-size: 70%;">
+Structures annotated with information to inform **layout**.
+</td>
+<td style="font-size: 70%;">
+Cells annotated with information to determine **cell style**.
+</td>
 </tr>
 </table>
 
 
+Adding uncertainty to models
+----------------------------
 
-Open questions
---------------
+![PPL = Probabilistic Programming Language](images/graphviz/languages-with-p.svg)
 
+* Use an existing language for stochastic simulation and inference, restricting
+  class of models to those expressible in nocell
+ 
+* Add stochastic data with a few new VBA functions (eg, <span style="font-size:
+  83%;">`=NORMAL(0,1)`</span>)
 
-1. Does cell ‘compile’ to nocell?
-   
-    - Unwrap loops, expand functions, ...
-   
-2. Or is cell a ‘nocell-constructing’ language?
-
-    - "Spreadsheets as values"
-   
-    - More interactive.
-
-
-Uncertainty
------------
-
-* Don't reinvent the wheel
-
-* Use existing language 
+* Output of PPL modelled as Monte Carlo runs on separate worksheet, with named
+  ranges, eg, <span style="font-size: 83%;">`=MEDIAN(param1)`</span>
 
 
-Broad architecture
-------------------
-
-Without uncertainty:
-
-![](images/graphviz/languages.svg)
-
-With uncertainty:
-
-![](images/graphviz/languages-with-p.svg)
-
-
-
-Further thoughts
-----------------
-
-1. Layout is half the battle but if solved would encourage adoption.
-
-	- "LaTeX for spreadsheets"
-	
-2. "Compilation" vs "Generation".
-
-3. How to represent uncertain parameters in "ordinary" Excel?
-
-	- Or compile a "probabilistic 'cell'"?
-	
 
 <!-- ==================== THE CHALLENGES OF CELLULAR ====================== --> 
--------------------------------------------------------------------------------
 
-The challenges of cellular
---------------------------
+Challenges 
+----------
 
+* Must make at least some tasks **easier**, eg, 
 
-What I think is necessary for success
--------------------------------------
-
-* Must make some tasks **easier**. eg, 
-
-	- Formatting tables (always a pain);
+	- Formatting tables (always a pain), "LaTeX for spreadsheets";
 	
 	- Make probabilistic calculations possible.
 
 * Must extend the "natural" language of spreadsheets 
 
-* Must allow incremental transition from easy to abstract
+* Must allow incremental transition from concrete to abstract
 
 * Must be interactive
 
